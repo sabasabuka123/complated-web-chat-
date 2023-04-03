@@ -85,6 +85,7 @@ def defs():
     else:
         
         return render_template("new.html")
+    #chatbot Engine
 @app.route('/chat', methods=['POST'])
 def chat():
   message = request.json['message']
