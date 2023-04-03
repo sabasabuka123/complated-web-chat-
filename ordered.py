@@ -12,7 +12,7 @@ username = 'sa'
 password = 'password'
 cnxn = pyodbc.connect('DRIVER={SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password)
 
-openai.api_key = "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"
+openai.api_key = "#put your api key"
 chat_log = []
 
 
