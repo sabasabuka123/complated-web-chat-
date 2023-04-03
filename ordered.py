@@ -6,10 +6,10 @@ import json
 import random
 
 app = Flask(__name__)
-server = '192.168.1.4'
+server = '0.0.0.0'
 database = 'test'
 username = 'sa'
-password = 'SqlPassW0rd'
+password = 'password'
 cnxn = pyodbc.connect('DRIVER={SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password)
 
 openai.api_key = "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"
