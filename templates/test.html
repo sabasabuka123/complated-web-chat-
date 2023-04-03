@@ -1,0 +1,114 @@
+<html>
+        <head>
+            <title>Chat App</title>
+            <style>
+                body {
+                    background-color: #f1f1f1;
+                    font-family: Arial, sans-serif;
+                  }
+                  
+                  h1 {
+                    text-align: center;
+                  }
+                  
+                  #chat-container {
+                    background-color: #fff;
+                    margin: 20px auto;
+                    padding: 20px;
+                    max-width: 600px;
+                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                  }
+                  
+                  #chat-log {
+                    margin-bottom: 10px;
+                    max-height: 300px;
+                    overflow-y: auto;
+                  }
+                  
+                  #chat-form {
+                    display: flex;
+                    margin-top: 10px;
+                  }
+                  
+                  #chat-input {
+                    flex-grow: 1;
+                    padding: 10px;
+                    border: none;
+                    border-radius: 5px 0 0 5px;
+                  }
+                  
+                  #chat-input:focus {
+                    outline: none;
+                  }
+                  
+                  button[type="submit"] {
+                    padding: 10px;
+                    background-color: #4CAF50;
+                    color: #fff;
+                    border: none;
+                    border-radius: 0 5px 5px 0;
+                    cursor: pointer;
+                  }
+                  
+                  button[type="submit"]:hover {
+                    background-color: #3e8e41;
+                  }
+                  
+            </style>
+            <!DOCTYPE html>
+            </head>
+            <body>
+              <h1>Chatbot</h1>
+              <div id="chat-container">
+                <div id="chat-log"></div>
+                <form id="chat-form">
+                  <input id="chat-input" type="text" autocomplete="off" placeholder="Type your message...">
+                  <button type="submit">Send</button>
+                </form>
+              </div>
+             
+            
+            
+
+            <script>
+            const chatLog = document.getElementById("chat-log");
+const chatForm = document.getElementById("chat-form");
+const chatInput = document.getElementById("chat-input");
+
+chatForm.addEventListener("submit", function(event) {
+  event.preventDefault();
+  const message = chatInput.value.trim();
+  if (message) {
+    appendMessage("user", message);
+    sendMessage(message);
+    chatInput.value = "";
+  }
+});
+
+function appendMessage(role, content) {
+  const messageDiv = document.createElement("div");
+  messageDiv.classList.add("message");
+  messageDiv.classList.add(role);
+  const messageContent = document.createElement("p");
+  messageContent.innerText = content;
+  messageDiv.appendChild(messageContent);
+  chatLog.appendChild(messageDiv);
+  chatLog.scrollTop = chatLog.scrollHeight;
+}
+
+async function sendMessage(message) {
+  const response = await fetch("/chat", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ message })
+  });
+  const data = await response.json();
+  appendMessage("assistant", data.response);
+}
+
+            </script>
+        </body>
+    </html>
+    
