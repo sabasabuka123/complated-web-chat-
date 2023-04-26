@@ -1,0 +1,146 @@
+<html>
+        <head>
+            <title>Chat App</title>
+            <style>
+                body {
+                    background-color: grey;
+                    font-family: sans-serif;
+                }
+
+                .container {
+                    max-width: 800px;
+                    margin: 0 auto;
+                }
+
+                .chat {
+                    margin: 20px 0;
+                    padding: 20px;
+                    border-radius: 10px;
+                    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+                    background-color: #fff;
+                }
+
+                .chat p {
+                    margin: 0 0 10px;
+                    padding: 10px;
+                    border-radius: 5px;
+                }
+
+                .chat p.sent {
+                    background-color: #DCF8C6;
+                    align-self: flex-end;
+                }
+
+                .chat p.received {
+                    background-color: #EAEAEA;
+                    align-self: flex-start;
+                }
+
+                form {
+                    display: flex;
+                    margin-top: 20px;
+                }
+
+                input[type="text"] {
+                    flex-grow: 1;
+                    padding: 10px;
+                    font-size: 16px;
+                    border-radius: 5px;
+                    border: none;
+                }
+
+                input[type="submit"] {
+                    padding: 10px 20px;
+                    font-size: 16px;
+                    border-radius: 5px;
+                    border: none;
+                    background-color: #4CAF50;
+                    color: #fff;
+                    cursor: pointer;
+                }
+            </style>
+        </head>
+        <body>
+            <h1 style="text-align: center; color:white">GPT CHAT</h1>
+
+            <div class="container">
+                <div class="chat"></div>
+                <form onsubmit="sendMessage(event)">
+                    <input type="text" placeholder="Type your message here..." id="messageInput">
+                    <input type="submit" value="Send">
+                </form>
+            </div>
+
+          <script>
+              const chat = document.querySelector('.chat');
+              const messageInput = document.getElementById('messageInput');
+
+              // Add event listener to input field for 'paste' event
+              messageInput.addEventListener('paste', handlePaste);
+
+              function handlePaste(event) {
+                // Get clipboard data using Clipboard API
+                const items = (event.clipboardData || event.originalEvent.clipboardData).items;
+
+                // Loop through items to find image
+                for (const item of items) {
+                  if (item.type.indexOf('image') !== -1) {
+                    // Get image data using FileReader API
+                    const blob = item.getAsFile();
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                      // Create <img> element and set src attribute to data URL
+                      const img = document.createElement('img');
+                      img.src = event.target.result;
+
+                      // Append <img> element to chat window
+                      addMessage(img, 'sent');
+                    };
+                    reader.readAsDataURL(blob);
+
+                    // Prevent default paste behavior
+                    event.preventDefault();
+                  }
+                }
+              }
+
+              function sendMessage(event) {
+                event.preventDefault();
+                const message = messageInput.value;
+                addMessage(message, 'sent');
+                messageInput.value = '';
+                fetch('/chat', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({ message })
+                })
+                .then(response => response.json())
+                .then(data => {
+                  const responseMessage = data.response;
+                  addMessage(responseMessage, 'received');
+                })
+                .catch(error => {
+                  console.error('Error:', error);
+                });
+              }
+
+              function addMessage(message, type) {
+                const newMessage = document.createElement('p');
+                newMessage.classList.add(type);
+
+                // If message is an <img> element, append it directly
+                if (message instanceof HTMLImageElement) {
+                  newMessage.appendChild(message);
+                } else {
+                  newMessage.innerText = message;
+                }
+
+                chat.appendChild(newMessage);
+              }
+
+          </script>
+  </body>
+</html>
+    
