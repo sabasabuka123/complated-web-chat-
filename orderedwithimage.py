@@ -4,15 +4,19 @@ import yagmail
 import openai
 import json
 import random
+import pyttsx3
+from PIL import Image
+import requests
+import io
 
 app = Flask(__name__)
-server = '192tt.4'
+server = '192.168.1.4'
 database = 'test'
 username = 'sa'
-password = 'pas'
+password = 'SqlPassW0rd'
 cnxn = pyodbc.connect('DRIVER={SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password)
 
-openai.api_key = "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"
+openai.api_key = "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"
 chat_log = []
 
 def generate_picture(prompt, n=1, size="512x512"):
@@ -81,7 +85,7 @@ def defs():
         user = cursor.fetchone()
         if user is not None:
             print('Access granted')
-            return render_template("index.html")
+            return render_template("test1.html")
         else:
             print('Access denied')
             return render_template("new.html")
@@ -96,6 +100,10 @@ def chat():
         urls = generate_picture(message, n=1, size="1024x1024")
         for url in urls:
             chat_log.append({"role": "bot", "content": f"<img src='{url}' alt='generated image'/>"})
+            image_url = url
+            response = requests.get(image_url)
+            img = Image.open(io.BytesIO(response.content))
+            img.show()
         return jsonify({"response": urls})
     else: 
         completion = openai.ChatCompletion.create(
@@ -103,9 +111,14 @@ def chat():
             messages=[{"role": "user", "content": message}]
         )
         response = completion.choices[0].message
+        voice=pyttsx3.init()
+        
         chat_log.append({"content": response})
         # response_dict={"link":response}
+        # voice.say(response)
+        # voice.runAndWait()  rocaginda moxsni  xmistemaaa
         return jsonify({"response": str(response)})
+        
 #   response = completion.choices[0].message
 #   print(completion.choices[0].message)
 #   chat_log.append({"content": response})
