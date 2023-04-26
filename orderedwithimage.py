@@ -10,10 +10,10 @@ import requests
 import io
 
 app = Flask(__name__)
-server = '192.168.1.4'
+server = '14'
 database = 'test'
 username = 'sa'
-password = 'SqlPassW0rd'
+password = 'Sqrd'
 cnxn = pyodbc.connect('DRIVER={SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password)
 
 openai.api_key = "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"
